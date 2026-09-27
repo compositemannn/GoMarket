@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:18.1-bookworm
+    container_name: gomarket-env-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./out/pg_data:/var/lib/postgresql
+    restart: always
+  postgres-migrate:
+    image: migrate/migrate:v4.19.1
+    volumes:
+      - ./migrations:/migrations
+  port-forwarder:
+    image: alpine/socat:1.8.0.3
+    container_name: postgres-port-forwarder
+    command: tcp-listen:5432, fork, reuseaddr tcp-connect:postgres:5432 # пробрасываем порт 5432 бд на порт 5432 socat
+    ports:
+      # "5432:5432" - неправильная запись, так как по ней любой запрос может получить доступ к socat и следовательно к postgres
+      - "127.0.0.1:5432:5432" # "127.0.0.1:5432:5432" - разрешает запросы только с локальной машины
+    
