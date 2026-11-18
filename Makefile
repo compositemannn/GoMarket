@@ -10,7 +10,7 @@ env-down: # останавливаем
 env-cleanup: # очистка окружения
 	@read -p "Очистить все volume файлы окружения? Опасность утечки данных. [y/N]: " ans; \
 	if [ "$$ans" = "y" ]; then \
-		docker compose down postgres && \
+		docker compose down postgres port-forwarder && \
 		rm -rf out/pg_data \
 		echo "Файлы окружения очищены"; \
 	else \
@@ -49,3 +49,9 @@ migrate-up:
 
 migrate-down:
 	@make migrate-action action=down
+
+gomarket-run:
+	@export LOGGER_FOLDER=$(CURDIR)/out/logs && \
+	export DB_HOST=localhost && \
+	go mod tidy && \
+	go run cmd/api/main.go

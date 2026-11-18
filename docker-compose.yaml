@@ -16,7 +16,7 @@ services:
   port-forwarder:
     image: alpine/socat:1.8.0.3
     container_name: postgres-port-forwarder
-    command: tcp-listen:5432, fork, reuseaddr tcp-connect:postgres:5432 # пробрасываем порт 5432 бд на порт 5432 socat
+    command: tcp-listen:5432,fork,reuseaddr tcp-connect:postgres:5432 # пробрасываем порт 5432 бд на порт 5432 socat
     ports:
       # "5432:5432" - неправильная запись, так как по ней любой запрос может получить доступ к socat и следовательно к postgres
       - "127.0.0.1:5432:5432" # "127.0.0.1:5432:5432" - разрешает запросы только с локальной машины
